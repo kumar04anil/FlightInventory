@@ -6,6 +6,7 @@ import com.aks.flightInventory.repository.InventoryRepository;
 import com.aks.flightInventory.service.InventoryService;
 import com.aks.flightInventory.utility.FlightResponseBuilder;
 import com.aks.model.FlightFullResponseDataDto;
+import com.aks.model.FlightRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,11 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Optional<FlightFullResponseDataDto> flightBySourceAndDestination(String source, String destination) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<FlightFullResponseDataDto> addNewFlights(FlightRequestDto flightRequestDto) {
         return Optional.empty();
     }
 

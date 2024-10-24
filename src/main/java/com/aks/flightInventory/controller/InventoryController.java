@@ -33,6 +33,8 @@ public class InventoryController implements FlightApi {
 
     @Override
     public ResponseEntity<FlightFullResponseDataDto> addNewFlights(FlightRequestDto flightRequestDto) {
-        return FlightApi.super.addNewFlights(flightRequestDto);
+       Optional<FlightFullResponseDataDto> response = inventoryService.addNewFlights(flightRequestDto);
+       return response.map(flights -> ResponseEntity.ok(flights))
+               .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).build());
     }
 }
