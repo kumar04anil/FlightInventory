@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/aks_airline
+    username: postgres
+    password: postgres
+
+server:
+  port: 8282
+  servlet:
+    context-path: /bookingds
+
+springdoc:
+  swagger-ui:
+    url: /airline.yml

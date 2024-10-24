@@ -1,0 +1,255 @@
+openapi: "3.0.2"
+info:
+  title: FlightInventory
+  version: "1.0"
+servers:
+  - url: https://localhost:8080
+tags:
+  - name: FlightInventory
+    description: Flight Inventory.
+
+paths:
+  /flight/bySourceAndDestination:
+    get:
+      tags:
+        - FlightDetails
+      summary: Fetch flight details by source and destination
+      operationId: flightsBySourceAndDestination
+      parameters:
+        - name: source
+          in: query
+          required: true
+          description: The source location (city or airport code).
+          schema:
+            type: string
+            example: LAX
+        - name: destination
+          in: query
+          required: true
+          description: The destination location (city or airport code).
+          schema:
+            type: string
+            example: JFK
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightFullResponseDataDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                validation_error_response:
+                  $ref: '#/components/examples/validation_error_response'
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDataDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDataDto'
+
+  /flight/add:
+    post:
+      tags:
+        - FlightDetails
+      summary: Add new flight
+      operationId: addNewFlights
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlightRequestDto'
+      responses:
+        '200':
+          description: Flight added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlightFullResponseDataDto'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              examples:
+                validation_error_response:
+                  value:
+                    code: "400"
+                    message: "Validation failed for flight details"
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDataDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseDataDto'
+
+components:
+  schemas:
+    FlightRequestDto:
+      type: object
+      required:
+        - flightNumber
+        - airline
+        - source
+        - destination
+        - departureTime
+        - arrivalTime
+        - seatsAvailability
+        - seetingClass
+        - fare
+        - airlineType
+        - totalSeats
+      properties:
+        flightNumber:
+          type: string
+          description: "The flight number"
+          example: "AI202"
+        airline:
+          type: string
+          description: "Airline name"
+          example: "Air India"
+        source:
+          type: string
+          description: "Source of the flight"
+          example: "New Delhi"
+        destination:
+          type: string
+          description: "Destination of the flight"
+          example: "Mumbai"
+        departureTime:
+          type: string
+          format: date-time
+          description: "Departure time of the flight"
+          example: "2024-10-23T14:30:00"
+        arrivalTime:
+          type: string
+          format: date-time
+          description: "Arrival time of the flight"
+          example: "2024-10-23T16:45:00"
+        seatClass:
+          type: string
+          example: BUSINESS
+        fare:
+          type: number
+          format: double
+          description: Price per passenger
+          example: '50324.44'
+        airlineType:
+          type: string
+          example: DOMESTIC
+        totalSeats:
+          type: integer
+          format: int32
+          example: 512
+
+    FlightDetailsDataDto:
+      type: object
+      properties:
+        flightNumber:
+          type: string
+          example: AIR-222
+        totalSeats:
+          type: integer
+          format: int32
+          example: 512
+        availableSeats:
+          type: integer
+          format: int32
+          example: 512
+        source:
+          type: string
+          example: HYDERABAD
+        destination:
+          type: string
+          example: MUMBAI
+        departureTime:
+          type: string
+          format: date-time
+          example: '2024-10-23T14:30:00'
+        arrivalTime:
+          type: string
+          format: date-time
+          example: '2024-10-23T16:45:00'
+        departureDate:
+          type: string
+          format: date-time
+          example: '2024-10-23'
+        arrivalDate:
+          type: string
+          format: date-time
+          example: '2024-10-23'
+        airline:
+          type: string
+          example: DOMESTIC
+        seatClass:
+          type: string
+          example: BUSINESS
+        fare:
+          type: number
+          format: double
+          description: Price per passenger
+          example: '50324.44'
+      required:
+        - flightNumber
+        - source
+        - destination
+
+    FlightFullResponseDataDto:
+      type: object
+      properties:
+        flights:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightDetailsDataDto'
+
+    ErrorResponseDataDto:
+      type: object
+      properties:
+        timestamp:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        detail:
+          type: string
+        instance:
+          type: string
+        code:
+          type: string
+        title:
+          type: string
+        subDetails:
+          description: A list of validation issues with the request
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorResponse_subDetails_inner'
+
+    ErrorResponse_subDetails_inner:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+
+  examples:
+    validation_error_response:
+      value:
+        timestamp: 2024-03-13T09:51:38.619668067Z
+        type: flightds/bad-request
+        title: Bad Request
+        status: "400"
+        detail: Validation errors
+        instance: flight/6666839eb-bfc5-4950-9a8c-5d56088b3017
+        code: flightda-abc-101
+        subDetails:
+          - code: id/invalid
+            message: Flight source & destination required
